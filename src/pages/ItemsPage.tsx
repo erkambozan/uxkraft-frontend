@@ -116,13 +116,14 @@ export default function ItemsPage() {
 
   const handleBulkEditSave = async (data: BulkEditData) => {
     try {
+      const countToUpdate = selectedItems.length
       const result = await apiService.bulkEdit(selectedItems, data)
       setSelectedItems([])
       await fetchItems()
       toast({
         variant: 'success',
         title: 'Success',
-        description: `Successfully updated ${result.updated} item(s)`,
+        description: `Successfully updated ${countToUpdate} item(s)`,
       })
     } catch (error) {
       console.error('Error updating items:', error)
@@ -140,6 +141,7 @@ export default function ItemsPage() {
 
   const handleUpdateTrackingSave = async (data: UpdateTrackingData) => {
     try {
+      const countToUpdate = selectedItems.length
       console.log('Updating tracking with data:', data)
       const result = await apiService.updateTracking(selectedItems, data)
       setSelectedItems([])
@@ -147,7 +149,7 @@ export default function ItemsPage() {
       toast({
         variant: 'success',
         title: 'Success',
-        description: `Successfully updated tracking for ${result.updated} item(s)`,
+        description: `Successfully updated tracking for ${countToUpdate} item(s)`,
       })
     } catch (error) {
       console.error('Error updating tracking:', error)
