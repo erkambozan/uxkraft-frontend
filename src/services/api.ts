@@ -35,6 +35,7 @@ export interface ItemsResponse {
   total: number
   page: number
   limit: number
+  totalPages: number
 }
 
 export interface BulkEditData {

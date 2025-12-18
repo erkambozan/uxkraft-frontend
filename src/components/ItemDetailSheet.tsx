@@ -114,13 +114,34 @@ export default function ItemDetailSheet({
   const dateOptions = generateDateOptions()
 
   // Auto-save function with debounce
+  // List of date fields that should use updateTracking endpoint
+  const dateFields = [
+    'poApprovalDate',
+    'hotelNeedByDate',
+    'expectedDelivery',
+    'cfaShopsSend',
+    'cfaShopsApproved',
+    'cfaShopsDelivered',
+    'orderedDate',
+    'shippedDate',
+    'deliveredDate',
+  ]
+
   const saveField = async (field: string, value: string | undefined) => {
     if (!fullItem?.id) return
     
     try {
       setSaving(true)
-      const updateData: any = { [field]: value }
-      await apiService.updateItem(fullItem.id, updateData)
+      
+      // Date fields should use updateTracking endpoint
+      if (dateFields.includes(field)) {
+        const trackingData: any = { [field]: value }
+        await apiService.updateTracking([fullItem.id], trackingData)
+      } else {
+        // Non-date fields use updateItem endpoint
+        const updateData: any = { [field]: value }
+        await apiService.updateItem(fullItem.id, updateData)
+      }
       
       // Update local state
       setFullItem((prev) => prev ? { ...prev, [field]: value } : null)
@@ -156,13 +177,42 @@ export default function ItemDetailSheet({
       setFullItem((prev) => prev ? { ...prev, [field]: isoDate } : null)
     }
     
-    // Save to backend
+    // Save to backend using updateTracking for date fields
     await saveField(field, isoDate)
   }
 
   // Handle shipping notes change
   const handleShippingNotesChange = async (value: string) => {
-    await saveField('shipNotes', value || undefined)
+    // shipNotes should use updateTracking endpoint with shippingNotes field
+    if (!fullItem?.id) return
+    
+    try {
+      setSaving(true)
+      await apiService.updateTracking([fullItem.id], { shippingNotes: value || undefined })
+      
+      // Update local state
+      setFullItem((prev) => prev ? { ...prev, shipNotes: value || undefined } : null)
+      
+      // Notify parent to refresh
+      if (onItemUpdated) {
+        onItemUpdated()
+      }
+      
+      toast({
+        variant: 'success',
+        title: 'Updated',
+        description: 'Shipping notes saved successfully',
+      })
+    } catch (error) {
+      console.error('Error updating shipping notes:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update shipping notes. Please try again.',
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
   // Use fullItem if available, otherwise fallback to item
