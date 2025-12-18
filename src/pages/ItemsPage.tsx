@@ -117,7 +117,7 @@ export default function ItemsPage() {
   const handleBulkEditSave = async (data: BulkEditData) => {
     try {
       const countToUpdate = selectedItems.length
-      const result = await apiService.bulkEdit(selectedItems, data)
+      await apiService.bulkEdit(selectedItems, data)
       setSelectedItems([])
       await fetchItems()
       toast({
@@ -143,7 +143,7 @@ export default function ItemsPage() {
     try {
       const countToUpdate = selectedItems.length
       console.log('Updating tracking with data:', data)
-      const result = await apiService.updateTracking(selectedItems, data)
+      await apiService.updateTracking(selectedItems, data)
       setSelectedItems([])
       await fetchItems()
       toast({
