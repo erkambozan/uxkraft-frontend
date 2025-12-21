@@ -209,4 +209,4 @@ Side sheet for updating tracking information:
 
 ---
 
-**Note**: This frontend requires the [uxkraft-backend](https://github.com/yourusername/uxkraft-backend) to be running for full functionality.
+**Note**: This frontend requires the [uxkraft-backend](https://github.com/erkambozan/uxkraft-backend) to be running for full functionality.
